@@ -7,23 +7,28 @@ var latCodesAkron = '81.5190';
 var lonCodesAkron = '41.0814';
 
 var formSubmitHandler = function (event) {
-    event.preventDefault();
 
-    var cityname = userInput.value.trim();
+    var cityname = userInputEl.value;
 
     if (cityname) {
         getWeatherData(cityname);
 
         forecastContainerEl.textContent = '';
         userInputEl.value = '';
-    } else {
-        alert('Enter a city');
     }
 }; console.log(formSubmitHandler);
 
 var buttonClick = function (event) {
     forecastContainerEl.addEventListener('userInput', formSubmitHandler);
 }
+
+var displayForecasts = function (userInput, forecastContainerEl) {
+  if (userInput === 0) {
+      forecastContainerEl.textContent = 'No city selected.';
+      return;
+  } else (userInput === '');
+
+}; console.log(displayForecasts);
 
 function getApiCin() {
     var requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=84.5120&lon=39.1031&appid=e0d7ec84dc06ed39177d5536248ed264';
@@ -58,6 +63,7 @@ function getApiAkron() {
 
     fetch(requestUrl)
     .then(function (response) {
+      console.log(response);
       return response.json();
     })
     .then(function (data) {
@@ -65,19 +71,11 @@ function getApiAkron() {
       
      
     }); 
-} console.log(getApiAkron)
+} console.log(getApiAkron);
 
-var displayForecasts = function (userInput, forecastContainer) {
-    if (userInput === 0) {
-        forecastContainerEl.textContent = 'No city selected.';
-        return;
-    } else (userInput === '');
-
-}
-
+formSubmitHandler();
+buttonClick();
+displayForecasts();
 getApiCin();
 getApiCol();
 getApiAkron();
-displayForecasts();
-userInputEl.addEventListener('click', buttonClick);
-
