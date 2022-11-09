@@ -1,4 +1,6 @@
 var userInputEl = document.querySelector('#user-input');
+var submitButton = document.querySelector('#weather');
+var searchCity = document.querySelector('#loc-id');
 var forecastContainerEl = document.querySelector('#forecast-container');
 var apiKey = 'e0d7ec84dc06ed39177d5536248ed264'
 var latCodesCol = '82.998';
@@ -30,8 +32,8 @@ var displayForecasts = function (userInput, forecastContainerEl) {
 
 }; console.log(displayForecasts);
 
-function getApiCin() {
-    var requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=84.5120&lon=39.1031&appid=e0d7ec84dc06ed39177d5536248ed264';
+function getLocation(city) {
+    var requestUrl = 'http://api.openweathermap.org/geo/1.0/direct?q='+ city +'&appid='+ apiKey;
 
     fetch(requestUrl)
     .then(function (response) {
@@ -40,12 +42,15 @@ function getApiCin() {
     .then(function (data) {
       console.log(data);
       
-     
+      var lat = data[0].lat;
+      var lon = data[0].lon;
+     getCurrent(lat, lon);
+     getForecast(lat, lon);
     });
-} console.log(getApiCin);
+}
 
-function getApiCol() {
-    var requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=82.998&lon=39.9612&appid=e0d7ec84dc06ed39177d5536248ed264';
+function getCurrent(lat, lon) {
+    var requestUrl = 'https://api.openweathermap.org/data/2.5/weather?lat='+ lat +'&lon='+ lon + '&units=imperial&appid='+ apiKey;
 
     fetch(requestUrl)
     .then(function (response) {
@@ -53,29 +58,58 @@ function getApiCol() {
     })
     .then(function (data) {
       console.log(data);
-      
+    
+      displayCurrentWeather(data);
      
     }); 
-} console.log(getApiCol);
+}
 
-function getApiAkron() {
-    var requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=81.5190&lon=41.0814&appid=e0d7ec84dc06ed39177d5536248ed264';
+function getForecast(lat, lon) {
+  var requestUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat='+ lat +'&lon='+ lon + '&units=imperial&appid='+ apiKey;
 
-    fetch(requestUrl)
-    .then(function (response) {
-      console.log(response);
-      return response.json();
-    })
-    .then(function (data) {
-      console.log(data);
-      
+  fetch(requestUrl)
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (data) {
+    console.log(data);
+  
+    displayForecast(data.list);
+   
+  }); 
+}
+
+function displayForecast(weatherData) {
+    for(var i=0; i < weatherData.length; i+=8) {
+      var weatherCard = document.createElement("div")
+      var date = document.createElement('h3')
+      var icon = document.createElement('img')
+
+
+      date.textContent = weatherData[i].dt_txt.split(' ')[0]
+      icon.setAttribute('src', 'http://openweathermap.org/img/wn/'+weatherData[i].weather[0].icon + '@2x.png')
+      weatherCard.append(date, icon)
+      forecastContainerEl.append(weatherCard)
+    }
      
-    }); 
-} console.log(getApiAkron);
+  
+}  
 
-formSubmitHandler();
-buttonClick();
-displayForecasts();
-getApiCin();
-getApiCol();
-getApiAkron();
+function displayCurrentWeather(weatherData) {
+    
+     
+  
+}  
+
+// formSubmitHandler();
+// buttonClick();
+// displayForecasts();
+// getApiCin();
+// getApiCol();
+// getApiAkron();
+
+submitButton.addEventListener("click", function (event){
+  event.preventDefault();
+    var city = searchCity.value;
+    getLocation(city)
+})
